@@ -19,3 +19,12 @@
 
 # Go workspace file
 go.work
+
+# tmp dir
+tmp
+
+# App related
+.env
+
+# Os Related Stuffs
+.DS_Store
