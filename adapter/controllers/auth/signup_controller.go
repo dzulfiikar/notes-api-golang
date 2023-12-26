@@ -2,6 +2,7 @@ package auth
 
 import (
 	. "notes-api-golang/application/usecases/auth"
+	"notes-api-golang/framework/http/responses"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,5 +18,11 @@ func NewSignUpController(signUpUseCase SignUpUseCase) *SignUpController {
 }
 
 func (controller *SignUpController) SignUp(c *gin.Context) {
-	controller.signUpUseCase.Execute(c)
+	result, err := controller.signUpUseCase.Execute(c)
+	if err != nil {
+		responses.NewBadRequestError(err).Send(c)
+		return
+	}
+
+	responses.NewSuccessResponse(result).Send(c)
 }

@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"errors"
 	. "notes-api-golang/adapter/presenters/auth"
 	. "notes-api-golang/framework/sql/repositories"
+	"notes-api-golang/framework/sql/schemas"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,35 +21,23 @@ func NewLoginUseCase(userRepository UserRepository, loginPresenter LoginPresente
 	}
 }
 
-func (useCase *LoginUseCase) Execute(c *gin.Context) {
+func (useCase *LoginUseCase) Execute(c *gin.Context) (data map[string]interface{}, err interface{}) {
 	var loginDTO LoginDTO
 	c.BindJSON(&loginDTO)
 
 	user, err := useCase.userRepository.FetchUserByEmail(loginDTO.Email)
 
-	if err != nil {
-		c.JSON(400, gin.H{
-			"message": "email or password is wrong",
-		})
-
-		return
+	if (err != nil && user == schemas.User{}) {
+		return nil, useCase.loginPresenter.ToErrorResponse(errors.New(("Invalid Email Or Password")))
 	}
 
 	if !user.CheckPasswordMatch(loginDTO.Password) {
-		c.JSON(400, gin.H{
-			"message": "email or password is wrong",
-		})
-
-		return
+		return nil, useCase.loginPresenter.ToErrorResponse(errors.New(("Invalid Email Or Password")))
 	}
 
-	accessToken, err := user.GenerateJWTToken()
+	accessToken, _ := user.GenerateJWTToken()
 
-	c.JSON(200, gin.H{
-		"message": "success",
-		"data": useCase.loginPresenter.ToResponse(user, JWTToken{
-			AccessToken: accessToken,
-		}),
-	})
-
+	return useCase.loginPresenter.ToResponse(user, JWTToken{
+		AccessToken: accessToken,
+	}), nil
 }

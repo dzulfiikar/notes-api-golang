@@ -15,6 +15,7 @@ type JWTToken struct {
 
 type LoginPresenter interface {
 	ToResponse(user schema.User, jwtToken JWTToken) (mapResponse map[string]interface{})
+	ToErrorResponse(err error) (mapResponse map[string]interface{})
 	ToDomain(dto LoginDTO) (user LoginDTO)
 }
 
@@ -32,6 +33,14 @@ func (presenter *loginPresenter) ToResponse(user schema.User, jwtToken JWTToken)
 
 	return
 
+}
+
+func (presenter *loginPresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+	mapResponse = map[string]interface{}{
+		"error": err.Error(),
+	}
+
+	return
 }
 
 func (presenter *loginPresenter) ToDomain(dto LoginDTO) (user LoginDTO) {

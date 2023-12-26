@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	schema "notes-api-golang/framework/sql/schemas"
 
 	"gorm.io/gorm"
@@ -35,7 +34,17 @@ func (repository *UserRepository) FetchUserByEmail(email string) (user schema.Us
 	repository.dbInstance.Where("email = ?", email).First(&user)
 
 	if user.Email == "" {
-		return user, fmt.Errorf("email not found")
+		return schema.User{}, err
+	}
+
+	return
+}
+
+func (repository *UserRepository) FetchUserById(id string) (user schema.User, err error) {
+	repository.dbInstance.Where("id = ?", id).First(&user)
+
+	if user.ID.String() == "" {
+		return user, err
 	}
 
 	return

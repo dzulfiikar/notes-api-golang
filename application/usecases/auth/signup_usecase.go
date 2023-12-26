@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	. "notes-api-golang/adapter/presenters/auth"
 	. "notes-api-golang/framework/sql/repositories"
 
@@ -22,25 +23,18 @@ func NewSignUpUseCase(userRepository UserRepository, signUpPresenter SignUpPrese
 }
 
 // execute SignUpUseCase
-func (useCase *SignUpUseCase) Execute(c *gin.Context) (err error) {
+func (useCase *SignUpUseCase) Execute(c *gin.Context) (data map[string]interface{}, err interface{}) {
 	var signUpDto SignUpDTO
 	c.BindJSON(&signUpDto)
 
 	// check if email already exist
 	if useCase.userRepository.FetchUserExistsByEmail(signUpDto.Email) {
-		c.JSON(400, gin.H{
-			"message": "email already exist",
-		})
-
-		return
+		return nil, useCase.signUpPresenter.ToBadRequestResponse(errors.New("Email already exists"))
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(signUpDto.Password), bcrypt.DefaultCost)
 	if err != nil {
-		// handle error
-		c.JSON(500, gin.H{
-			"message": "internal server error",
-		})
+		return nil, err
 	}
 
 	signUpDto.Password = string(hashedPassword)
@@ -48,10 +42,6 @@ func (useCase *SignUpUseCase) Execute(c *gin.Context) (err error) {
 	// save user
 	var user = useCase.userRepository.Save(useCase.signUpPresenter.ToDomain(signUpDto))
 
-	c.JSON(200, gin.H{
-		"message": "success",
-		"data":    useCase.signUpPresenter.ToResponse(user),
-	})
+	return useCase.signUpPresenter.ToResponse(user), nil
 
-	return
 }

@@ -3,6 +3,7 @@ package auth
 import (
 	. "notes-api-golang/adapter/presenters/auth"
 	. "notes-api-golang/application/usecases/auth"
+	"notes-api-golang/framework/http/responses"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,5 +21,12 @@ func NewLoginController(loginUseCase LoginUseCase, loginPresenter LoginPresenter
 }
 
 func (controller *LoginController) Login(c *gin.Context) {
-	controller.loginUseCase.Execute(c)
+	result, err := controller.loginUseCase.Execute(c)
+	if err != nil {
+		responses.NewBadRequestError(err).Send(c)
+		return
+	}
+
+	responses.NewSuccessResponse(result).Send(c)
+
 }
