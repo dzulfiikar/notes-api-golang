@@ -1,4 +1,4 @@
-package auth
+package routes
 
 import (
 	controllers "notes-api-golang/adapter/controllers/auth"

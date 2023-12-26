@@ -1,4 +1,4 @@
-package note
+package routes
 
 import (
 	noteControllers "notes-api-golang/adapter/controllers/note"
@@ -15,6 +15,7 @@ func NoteRouteGroup(router *gin.RouterGroup) {
 	auth := router.Group("/notes")
 
 	CreateNoteRoute(auth)
+	FetchAllNoteRoute(auth)
 }
 
 func CreateNoteRoute(router *gin.RouterGroup) {
@@ -23,4 +24,12 @@ func CreateNoteRoute(router *gin.RouterGroup) {
 	useCase := noteUseCases.NewCreateNoteUseCase(*repository, presenter)
 	controller := noteControllers.NewCreateNoteController(*useCase, presenter)
 	router.POST("/", middlewares.CreateAuthMiddleware, controller.CreateNote)
+}
+
+func FetchAllNoteRoute(router *gin.RouterGroup) {
+	repository := repositories.NewNoteRepository(mongo.Database)
+	presenter := notePresenter.NewFetchAllNotePresenter()
+	useCase := noteUseCases.NewFetchAllNoteUseCase(*repository, presenter)
+	controller := noteControllers.NewFetchAllNoteController(*useCase, presenter)
+	router.GET("/", middlewares.CreateAuthMiddleware, controller.FetchAllNote)
 }
