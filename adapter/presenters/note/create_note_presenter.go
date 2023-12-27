@@ -46,6 +46,8 @@ func (presenter *createNotePresenter) ToDomain(dto CreateNoteDTO, userId string)
 		UpdatedAt: time.Now().String(),
 		UpdatedBy: userId,
 		Deleted:   false,
+		DeletedAt: "",
+		DeletedBy: "",
 	}
 
 	return

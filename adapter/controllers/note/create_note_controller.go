@@ -24,6 +24,8 @@ func (controller *CreateNoteController) CreateNote(c *gin.Context) {
 	result, err := controller.createNoteUseCase.Execute(c)
 	if err != nil {
 		responses.NewBadRequestError(err).Send(c)
+		return
+
 	}
 
 	responses.NewCreatedResponse(result).Send(c)

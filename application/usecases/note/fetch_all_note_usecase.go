@@ -24,7 +24,7 @@ func (useCase *FetchAllNoteUseCase) Execute(c *gin.Context) (data []map[string]i
 
 	userID := c.MustGet("user_id").(string)
 
-	result, err := useCase.noteRepository.FetchAllNotes(bson.M{"created_by": userID})
+	result, err := useCase.noteRepository.FetchAllNotes(bson.M{"created_by": userID, "deleted": "false"})
 
 	if err != nil {
 		return nil, err

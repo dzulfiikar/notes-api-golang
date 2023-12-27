@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"notes-api-golang/framework/mongo/schemas"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -38,13 +39,25 @@ func (repository *NoteRepository) FetchNoteById(id interface{}, userId string) (
 	var note schemas.Note
 	collection := repository.mongoDatabase.Collection("notes")
 
-	objectID, err := primitive.ObjectIDFromHex(id.(string))
-	if err != nil {
+	var objectID primitive.ObjectID
+	var objectIDErr error
+	switch id.(type) {
+	case string:
+		var err error
+		objectID, objectIDErr = primitive.ObjectIDFromHex(id.(string))
+		if err != nil {
+			return note, errors.New("Invalid note id")
+		}
+	case primitive.ObjectID:
+		objectID = id.(primitive.ObjectID)
+	default:
 		return note, errors.New("Invalid note id")
 	}
 
-	err = collection.FindOne(context.Background(), bson.M{"_id": objectID, "created_by": userId}).Decode(&note)
-	if err != nil {
+	objectIDErr = collection.FindOne(context.Background(), bson.M{"_id": objectID, "created_by": userId, "deleted": bson.M{
+		"$exists": false,
+	}}).Decode(&note)
+	if objectIDErr != nil {
 		return note, errors.New("Note not found")
 	}
 
@@ -54,7 +67,11 @@ func (repository *NoteRepository) FetchNoteById(id interface{}, userId string) (
 func (repository *NoteRepository) FetchAllNotes(filter bson.M) ([]schemas.Note, error) {
 	var notes []schemas.Note
 	collection := repository.mongoDatabase.Collection("notes")
+	filter["deleted"] = bson.M{
+		"$exists": false,
+	}
 	cursor, err := collection.Find(context.Background(), filter)
+	fmt.Println("cursor", cursor)
 	if err != nil {
 		return notes, err
 	}
@@ -62,4 +79,31 @@ func (repository *NoteRepository) FetchAllNotes(filter bson.M) ([]schemas.Note, 
 		return notes, err
 	}
 	return notes, nil
+}
+
+func (repository *NoteRepository) Delete(id interface{}, userId string) (schemas.Note, error) {
+	var note schemas.Note
+	collection := repository.mongoDatabase.Collection("notes")
+
+	objectID, err := primitive.ObjectIDFromHex(id.(string))
+	if err != nil {
+		return note, errors.New("Invalid note id")
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"deleted":    true,
+			"deleted_at": time.Now(),
+			"deleted_by": userId,
+		},
+	}
+
+	err = collection.FindOneAndUpdate(context.Background(), bson.M{"_id": objectID, "created_by": userId, "deleted": bson.M{
+		"$exists": false,
+	}}, update).Decode(&note)
+	if err != nil {
+		return note, errors.New("Note not found")
+	}
+
+	return note, nil
 }
