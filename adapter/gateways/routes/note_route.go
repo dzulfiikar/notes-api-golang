@@ -16,6 +16,7 @@ func NoteRouteGroup(router *gin.RouterGroup) {
 
 	CreateNoteRoute(auth)
 	FetchAllNoteRoute(auth)
+	FetchNoteRoute(auth)
 }
 
 func CreateNoteRoute(router *gin.RouterGroup) {
@@ -32,4 +33,12 @@ func FetchAllNoteRoute(router *gin.RouterGroup) {
 	useCase := noteUseCases.NewFetchAllNoteUseCase(*repository, presenter)
 	controller := noteControllers.NewFetchAllNoteController(*useCase, presenter)
 	router.GET("/", middlewares.CreateAuthMiddleware, controller.FetchAllNote)
+}
+
+func FetchNoteRoute(router *gin.RouterGroup) {
+	repository := repositories.NewNoteRepository(mongo.Database)
+	presenter := notePresenter.NewFetchNotePresenter()
+	useCase := noteUseCases.NewFetchNoteUseCase(*repository, presenter)
+	controller := noteControllers.NewFetchNoteController(*useCase, presenter)
+	router.GET("/:note_id", middlewares.CreateAuthMiddleware, controller.FetchNote)
 }

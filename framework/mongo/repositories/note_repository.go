@@ -2,10 +2,12 @@ package repositories
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"notes-api-golang/framework/mongo/schemas"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -35,9 +37,15 @@ func (repository *NoteRepository) Create(note schemas.Note) (schemas.Note, error
 func (repository *NoteRepository) FetchNoteById(id interface{}, userId string) (schemas.Note, error) {
 	var note schemas.Note
 	collection := repository.mongoDatabase.Collection("notes")
-	err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&note)
+
+	objectID, err := primitive.ObjectIDFromHex(id.(string))
 	if err != nil {
-		return note, err
+		return note, errors.New("Invalid note id")
+	}
+
+	err = collection.FindOne(context.Background(), bson.M{"_id": objectID, "created_by": userId}).Decode(&note)
+	if err != nil {
+		return note, errors.New("Note not found")
 	}
 
 	return note, nil
