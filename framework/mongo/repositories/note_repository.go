@@ -43,10 +43,10 @@ func (repository *NoteRepository) FetchNoteById(id interface{}, userId string) (
 	return note, nil
 }
 
-func (repository *NoteRepository) FetchAllNotes(userId string) ([]schemas.Note, error) {
+func (repository *NoteRepository) FetchAllNotes(filter bson.M) ([]schemas.Note, error) {
 	var notes []schemas.Note
 	collection := repository.mongoDatabase.Collection("notes")
-	cursor, err := collection.Find(context.Background(), bson.M{"created_by": userId})
+	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		return notes, err
 	}
