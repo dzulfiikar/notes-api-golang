@@ -32,8 +32,7 @@ func ConnectMysql() {
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		fmt.Println(err)
-		panic("Failed to connect to database")
+		panic("Failed to connect to database" + err.Error())
 	} else {
 		fmt.Println("Connected to database")
 		SqlDB = db

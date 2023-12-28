@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"errors"
-	"fmt"
 	"notes-api-golang/framework/mongo/schemas"
 	"time"
 
@@ -29,7 +28,7 @@ func (repository *NoteRepository) Create(note schemas.Note) (schemas.Note, error
 	if errInsert != nil {
 		return schemas.Note{}, errInsert
 	}
-	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+
 	fetchedNote, errFetch := repository.FetchNoteById(insertResult.InsertedID, note.CreatedBy)
 
 	return fetchedNote, errFetch
@@ -69,7 +68,6 @@ func (repository *NoteRepository) FetchAllNotes(filter bson.M) ([]schemas.Note, 
 	collection := repository.mongoDatabase.Collection("notes")
 
 	cursor, err := collection.Find(context.Background(), filter)
-	fmt.Println("cursor", cursor)
 	if err != nil {
 		return notes, err
 	}
@@ -79,7 +77,7 @@ func (repository *NoteRepository) FetchAllNotes(filter bson.M) ([]schemas.Note, 
 	return notes, nil
 }
 
-func (repository *NoteRepository) Delete(id interface{}, userId string) (schemas.Note, error) {
+func (repository *NoteRepository) SoftDelete(id interface{}, userId string) (schemas.Note, error) {
 	var note schemas.Note
 	collection := repository.mongoDatabase.Collection("notes")
 
@@ -132,4 +130,21 @@ func (repository *NoteRepository) Update(id interface{}, note schemas.Note, user
 	}
 
 	return noteResult, nil
+}
+
+func (repository *NoteRepository) HardDelete(id interface{}) (schemas.Note, error) {
+	var note schemas.Note
+	collection := repository.mongoDatabase.Collection("notes")
+
+	objectID, err := primitive.ObjectIDFromHex(id.(string))
+	if err != nil {
+		return note, errors.New("Invalid note id")
+	}
+
+	err = collection.FindOneAndDelete(context.Background(), bson.M{"_id": objectID, "deleted": true}).Decode(&note)
+	if err != nil {
+		return note, errors.New("Note not found")
+	}
+
+	return note, nil
 }

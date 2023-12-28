@@ -24,7 +24,7 @@ func (useCase *DeleteNoteUseCase) Execute(c *gin.Context) (data map[string]inter
 	noteId := c.Param("note_id")
 	userID := c.MustGet("user_id").(string)
 
-	result, err := useCase.noteRepository.Delete(noteId, userID)
+	result, err := useCase.noteRepository.SoftDelete(noteId, userID)
 
 	if result.ID == "" {
 		return nil, errors.New("Note not found")
