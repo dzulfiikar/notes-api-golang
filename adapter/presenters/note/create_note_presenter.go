@@ -41,13 +41,10 @@ func (presenter *createNotePresenter) ToDomain(dto CreateNoteDTO, userId string)
 	note = schema.Note{
 		Title:     dto.Title,
 		Content:   dto.Content,
-		CreatedAt: time.Now().String(),
+		CreatedAt: time.Now(),
 		CreatedBy: userId,
-		UpdatedAt: time.Now().String(),
+		UpdatedAt: time.Now(),
 		UpdatedBy: userId,
-		Deleted:   false,
-		DeletedAt: "",
-		DeletedBy: "",
 	}
 
 	return

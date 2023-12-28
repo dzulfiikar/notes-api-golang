@@ -107,3 +107,31 @@ func (repository *NoteRepository) Delete(id interface{}, userId string) (schemas
 
 	return note, nil
 }
+
+func (repository *NoteRepository) Update(id interface{}, note schemas.Note, userId string) (schemas.Note, error) {
+	var noteResult schemas.Note
+	collection := repository.mongoDatabase.Collection("notes")
+
+	objectID, err := primitive.ObjectIDFromHex(id.(string))
+	if err != nil {
+		return noteResult, errors.New("Invalid note id")
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"title":      note.Title,
+			"content":    note.Content,
+			"updated_at": time.Now(),
+			"updated_by": userId,
+		},
+	}
+
+	err = collection.FindOneAndUpdate(context.Background(), bson.M{"_id": objectID, "created_by": userId, "deleted": bson.M{
+		"$exists": false,
+	}}, update).Decode(&noteResult)
+	if err != nil {
+		return noteResult, errors.New("Note not found")
+	}
+
+	return noteResult, nil
+}
