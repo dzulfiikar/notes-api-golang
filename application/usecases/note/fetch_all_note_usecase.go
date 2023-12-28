@@ -24,7 +24,16 @@ func (useCase *FetchAllNoteUseCase) Execute(c *gin.Context) (data []map[string]i
 
 	userID := c.MustGet("user_id").(string)
 
-	result, err := useCase.noteRepository.FetchAllNotes(bson.M{"created_by": userID, "deleted": "false"})
+	filter := bson.M{"created_by": userID}
+
+	// if query deleted is true, then fetch all notes including deleted notes
+	if c.Query("deleted") == "true" {
+		filter = bson.M{"created_by": userID, "deleted": true}
+	} else {
+		filter = bson.M{"created_by": userID, "deleted": bson.M{"$exists": false}}
+	}
+
+	result, err := useCase.noteRepository.FetchAllNotes(filter)
 
 	if err != nil {
 		return nil, err

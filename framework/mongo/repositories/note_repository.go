@@ -67,9 +67,7 @@ func (repository *NoteRepository) FetchNoteById(id interface{}, userId string) (
 func (repository *NoteRepository) FetchAllNotes(filter bson.M) ([]schemas.Note, error) {
 	var notes []schemas.Note
 	collection := repository.mongoDatabase.Collection("notes")
-	filter["deleted"] = bson.M{
-		"$exists": false,
-	}
+
 	cursor, err := collection.Find(context.Background(), filter)
 	fmt.Println("cursor", cursor)
 	if err != nil {
