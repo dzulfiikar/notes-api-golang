@@ -23,7 +23,7 @@ func NewUpdateNoteController(updateNoteUseCase notesUseCase.UpdateNoteUseCase, u
 func (controller *UpdateNoteController) UpdateNote(c *gin.Context) {
 	result, err := controller.updateNoteUseCase.Execute(c)
 	if err != nil {
-		responses.NewBadRequestError(err).Send(c)
+		responses.NewErrorResponse(err).Send(c)
 		return
 
 	}

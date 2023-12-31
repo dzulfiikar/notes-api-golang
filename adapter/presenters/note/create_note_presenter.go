@@ -12,6 +12,7 @@ type CreateNoteDTO struct {
 
 type CreateNotePresenter interface {
 	ToResponse(note schema.Note) (mapResponse map[string]interface{})
+	ToErrorResponse(err error) (mapResponse map[string]interface{})
 	ToDomain(dto CreateNoteDTO, userId string) (note schema.Note)
 }
 
@@ -45,6 +46,14 @@ func (presenter *createNotePresenter) ToDomain(dto CreateNoteDTO, userId string)
 		CreatedBy: userId,
 		UpdatedAt: time.Now(),
 		UpdatedBy: userId,
+	}
+
+	return
+}
+
+func (presenter *createNotePresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+	mapResponse = map[string]interface{}{
+		"error": err.Error(),
 	}
 
 	return

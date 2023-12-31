@@ -20,7 +20,7 @@ func NewSignUpController(signUpUseCase SignUpUseCase) *SignUpController {
 func (controller *SignUpController) SignUp(c *gin.Context) {
 	result, err := controller.signUpUseCase.Execute(c)
 	if err != nil {
-		responses.NewBadRequestError(err).Send(c)
+		responses.NewErrorResponse(err).Send(c)
 		return
 	}
 

@@ -20,7 +20,7 @@ func NewFetchAllNoteUseCase(noteRepository NoteRepository, fetchAllNotePresenter
 	}
 }
 
-func (useCase *FetchAllNoteUseCase) Execute(c *gin.Context) (data []map[string]interface{}, err error) {
+func (useCase *FetchAllNoteUseCase) Execute(c *gin.Context) (data []map[string]interface{}, err interface{}) {
 
 	userID := c.MustGet("user_id").(string)
 
@@ -33,10 +33,10 @@ func (useCase *FetchAllNoteUseCase) Execute(c *gin.Context) (data []map[string]i
 		filter = bson.M{"created_by": userID, "deleted": bson.M{"$exists": false}}
 	}
 
-	result, err := useCase.noteRepository.FetchAllNotes(filter)
+	result, error := useCase.noteRepository.FetchAllNotes(filter)
 
-	if err != nil {
-		return nil, err
+	if error != nil {
+		return nil, useCase.fetchAllNotePresenter.ToErrorResponse(error)
 	}
 
 	return useCase.fetchAllNotePresenter.ToResponse(result), nil

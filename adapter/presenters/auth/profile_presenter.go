@@ -6,6 +6,7 @@ import (
 
 type ProfilePresenter interface {
 	ToResponse(user schema.User) (mapResponse map[string]interface{})
+	ToErrorResponse(err error) (mapResponse map[string]interface{})
 }
 
 func NewProfilePresenter() ProfilePresenter {
@@ -21,4 +22,12 @@ func (presenter *profilePresenter) ToResponse(user schema.User) (mapResponse map
 
 	return
 
+}
+
+func (presenter *profilePresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+	mapResponse = map[string]interface{}{
+		"message": err.Error(),
+	}
+
+	return
 }

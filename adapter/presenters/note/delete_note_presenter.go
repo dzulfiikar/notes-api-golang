@@ -6,6 +6,7 @@ import (
 
 type DeleteNotePresenter interface {
 	ToResponse(note schema.Note) (mapResponse map[string]interface{})
+	ToErrorResponse(err error) (mapResponse map[string]interface{})
 }
 
 func NewDeleteNotePresenter() DeleteNotePresenter {
@@ -21,4 +22,11 @@ func (presenter *deleteNotePresenter) ToResponse(note schema.Note) (noteResponse
 
 	return
 
+}
+
+func (presenter *deleteNotePresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+	mapResponse = map[string]interface{}{
+		"error": err.Error(),
+	}
+	return
 }

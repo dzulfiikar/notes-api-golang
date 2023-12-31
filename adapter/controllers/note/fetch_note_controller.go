@@ -23,7 +23,7 @@ func NewFetchNoteController(fetchNoteUseCase notesUseCase.FetchNoteUseCase, fetc
 func (controller *FetchNoteController) FetchNote(c *gin.Context) {
 	result, err := controller.fetchNoteUseCase.Execute(c)
 	if err != nil {
-		responses.NewNotFoundError(err).Send(c)
+		responses.NewErrorResponse(err).SendWithStatus(c, 404)
 		return
 	}
 

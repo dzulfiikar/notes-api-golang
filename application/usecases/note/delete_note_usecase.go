@@ -20,18 +20,18 @@ func NewDeleteNoteUseCase(noteRepository NoteRepository, deleteNotePresenter Del
 	}
 }
 
-func (useCase *DeleteNoteUseCase) Execute(c *gin.Context) (data map[string]interface{}, err error) {
+func (useCase *DeleteNoteUseCase) Execute(c *gin.Context) (data map[string]interface{}, err interface{}) {
 	noteId := c.Param("note_id")
 	userID := c.MustGet("user_id").(string)
 
 	result, err := useCase.noteRepository.SoftDelete(noteId, userID)
 
 	if result.ID == "" {
-		return nil, errors.New("Note not found")
+		return nil, useCase.deleteNotePresenter.ToErrorResponse(errors.New("note not found"))
 	}
 
 	if err != nil {
-		return nil, errors.New("Note not found")
+		return nil, useCase.deleteNotePresenter.ToErrorResponse(errors.New("note not found"))
 	}
 
 	return useCase.deleteNotePresenter.ToResponse(result), nil

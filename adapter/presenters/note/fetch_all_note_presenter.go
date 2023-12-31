@@ -6,6 +6,7 @@ import (
 
 type FetchAllNotePresenter interface {
 	ToResponse(notes []schema.Note) (mapResponse []map[string]interface{})
+	ToErrorResponse(err error) (mapResponse map[string]interface{})
 }
 
 func NewFetchAllNotePresenter() FetchAllNotePresenter {
@@ -32,4 +33,12 @@ func (presenter *fetchAllNotePresenter) ToResponse(notes []schema.Note) (notesRe
 
 	return
 
+}
+
+func (presenter *fetchAllNotePresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+	mapResponse = map[string]interface{}{
+		"error": err.Error(),
+	}
+
+	return
 }

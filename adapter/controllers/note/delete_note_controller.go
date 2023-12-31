@@ -23,7 +23,7 @@ func NewDeleteNoteController(deleteNoteUseCase notesUseCase.DeleteNoteUseCase, d
 func (controller *DeleteNoteController) DeleteNote(c *gin.Context) {
 	result, err := controller.deleteNoteUseCase.Execute(c)
 	if err != nil {
-		responses.NewNotFoundError(err).Send(c)
+		responses.NewErrorResponse(err).SendWithStatus(c, 404)
 		return
 	}
 

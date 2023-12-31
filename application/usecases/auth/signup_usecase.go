@@ -39,7 +39,6 @@ func (useCase *SignUpUseCase) Execute(c *gin.Context) (data map[string]interface
 
 	signUpDto.Password = string(hashedPassword)
 
-	// save user
 	var user = useCase.userRepository.Save(useCase.signUpPresenter.ToDomain(signUpDto))
 
 	return useCase.signUpPresenter.ToResponse(user), nil

@@ -23,7 +23,7 @@ func NewFetchAllNoteController(fetchAllNoteUseCase notesUseCase.FetchAllNoteUseC
 func (controller *FetchAllNoteController) FetchAllNote(c *gin.Context) {
 	result, err := controller.fetchAllNoteUseCase.Execute(c)
 	if err != nil {
-		responses.NewBadRequestError(err).Send(c)
+		responses.NewErrorResponse(err).Send(c)
 		return
 	}
 

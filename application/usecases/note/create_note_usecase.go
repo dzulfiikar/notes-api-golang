@@ -19,7 +19,7 @@ func NewCreateNoteUseCase(noteRepository NoteRepository, createNotePresenter Cre
 	}
 }
 
-func (useCase *CreateNoteUseCase) Execute(c *gin.Context) (data map[string]interface{}, err error) {
+func (useCase *CreateNoteUseCase) Execute(c *gin.Context) (data map[string]interface{}, error interface{}) {
 	var createNoteDTO CreateNoteDTO
 	c.BindJSON(&createNoteDTO)
 
@@ -28,7 +28,7 @@ func (useCase *CreateNoteUseCase) Execute(c *gin.Context) (data map[string]inter
 	result, err := useCase.noteRepository.Create(useCase.createNotePresenter.ToDomain(createNoteDTO, userID))
 
 	if err != nil {
-		return nil, err
+		return nil, useCase.createNotePresenter.ToErrorResponse(err)
 	}
 
 	return useCase.createNotePresenter.ToResponse(result), nil

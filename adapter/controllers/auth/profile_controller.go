@@ -20,7 +20,7 @@ func NewProfileController(profileUseCase ProfileUseCase) *ProfileController {
 func (controller *ProfileController) GetProfile(c *gin.Context) {
 	result, err := controller.profileUseCase.Execute(c)
 	if err != nil {
-		responses.NewBadRequestError(err).Send(c)
+		responses.NewErrorResponse(err).Send(c)
 		return
 	}
 

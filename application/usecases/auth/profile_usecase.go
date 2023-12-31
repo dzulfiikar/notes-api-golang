@@ -21,16 +21,12 @@ func NewProfileUseCase(userRepository UserRepository, profilePresenter ProfilePr
 }
 
 // execute ProfileUseCase
-func (useCase *ProfileUseCase) Execute(c *gin.Context) (data map[string]interface{}, err error) {
+func (useCase *ProfileUseCase) Execute(c *gin.Context) (data map[string]interface{}, err interface{}) {
 	var userId = c.MustGet("user_id").(string)
 
-	user, err := useCase.userRepository.FetchUserById(userId)
-	if err != nil {
-		c.JSON(403, gin.H{
-			"message": "error",
-		})
-
-		return nil, err
+	user, error := useCase.userRepository.FetchUserById(userId)
+	if error != nil {
+		return nil, useCase.profilePresenter.ToErrorResponse(error)
 	}
 
 	return useCase.profilePresenter.ToResponse(user), nil

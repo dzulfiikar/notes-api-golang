@@ -23,7 +23,7 @@ func NewLoginController(loginUseCase LoginUseCase, loginPresenter LoginPresenter
 func (controller *LoginController) Login(c *gin.Context) {
 	result, err := controller.loginUseCase.Execute(c)
 	if err != nil {
-		responses.NewBadRequestError(err).Send(c)
+		responses.NewErrorResponse(err).Send(c)
 		return
 	}
 

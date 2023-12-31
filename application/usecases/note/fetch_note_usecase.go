@@ -1,7 +1,6 @@
 package notes
 
 import (
-	"errors"
 	. "notes-api-golang/adapter/presenters/note"
 	. "notes-api-golang/framework/mongo/repositories"
 
@@ -20,18 +19,18 @@ func NewFetchNoteUseCase(noteRepository NoteRepository, fetchNotePresenter Fetch
 	}
 }
 
-func (useCase *FetchNoteUseCase) Execute(c *gin.Context) (data map[string]interface{}, err error) {
+func (useCase *FetchNoteUseCase) Execute(c *gin.Context) (data map[string]interface{}, error interface{}) {
 	noteId := c.Param("note_id")
 	userID := c.MustGet("user_id").(string)
 
 	result, err := useCase.noteRepository.FetchNoteById(noteId, userID)
 
 	if result.ID == "" {
-		return nil, errors.New("Note not found")
+		return nil, useCase.fetchNotePresenter.ToErrorResponse(err)
 	}
 
 	if err != nil {
-		return nil, errors.New("Note not found")
+		return nil, useCase.fetchNotePresenter.ToErrorResponse(err)
 	}
 
 	return useCase.fetchNotePresenter.ToResponse(result), nil
