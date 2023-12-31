@@ -11,6 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// DeleteNoteJob registers a cron job to delete notes that are marked as deleted
+// more than 30 days ago. It gets a scheduler instance, creates a delete note task
+// function that fetches deleted notes from the database older than 30 days and deletes
+// them. It schedules this task to run daily at 00:00:01 using the provided scheduler.
 func DeleteNoteJob(scheduler goCron.Scheduler) {
 
 	deleteNoteTask := goCron.NewTask(
