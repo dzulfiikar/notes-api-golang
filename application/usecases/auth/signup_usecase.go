@@ -29,7 +29,7 @@ func (useCase *SignUpUseCase) Execute(c *gin.Context) (data map[string]interface
 
 	// check if email already exist
 	if useCase.userRepository.FetchUserExistsByEmail(signUpDto.Email) {
-		return nil, useCase.signUpPresenter.ToBadRequestResponse(errors.New("Email already exists"))
+		return nil, useCase.signUpPresenter.ToErrorResponse(errors.New("Email already exists"))
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(signUpDto.Password), bcrypt.DefaultCost)
