@@ -19,6 +19,7 @@ func NoteRouteGroup(router *gin.RouterGroup) {
 	FetchNoteRoute(auth)
 	DeleteNoteRoute(auth)
 	UpdateNoteRoute(auth)
+	RecoverNoteRoute(auth)
 }
 
 func CreateNoteRoute(router *gin.RouterGroup) {
@@ -59,4 +60,12 @@ func UpdateNoteRoute(router *gin.RouterGroup) {
 	useCase := noteUseCases.NewUpdateNoteUseCase(*repository, presenter)
 	controller := noteControllers.NewUpdateNoteController(*useCase, presenter)
 	router.PUT("/:note_id", middlewares.CreateAuthMiddleware, controller.UpdateNote)
+}
+
+func RecoverNoteRoute(router *gin.RouterGroup) {
+	repository := repositories.NewNoteRepository(mongo.Database)
+	presenter := notePresenter.NewRecoverNotePresenter()
+	useCase := noteUseCases.NewRecoverNoteUseCase(*repository, presenter)
+	controller := noteControllers.NewRecoverNoteController(*useCase, presenter)
+	router.PATCH("/:note_id/recover", middlewares.CreateAuthMiddleware, controller.RecoverNote)
 }
