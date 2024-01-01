@@ -1,12 +1,13 @@
 package note
 
 import (
+	. "notes-api-golang/adapter/presenters"
 	schema "notes-api-golang/framework/mongo/schemas"
 )
 
 type FetchNotePresenter interface {
+	Presenter
 	ToResponse(note schema.Note) (mapResponse map[string]interface{})
-	ToErrorResponse(err error) (mapResponse map[string]interface{})
 }
 
 func NewFetchNotePresenter() FetchNotePresenter {
@@ -33,9 +34,10 @@ func (presenter *fetchNotePresenter) ToResponse(note schema.Note) (noteResponse 
 
 }
 
-func (presenter *fetchNotePresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+func (presenter *fetchNotePresenter) ToErrorResponse(err error, code int) (mapResponse map[string]interface{}) {
 	mapResponse = map[string]interface{}{
 		"error": err.Error(),
+		"code":  code,
 	}
 
 	return

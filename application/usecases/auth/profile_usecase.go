@@ -26,7 +26,7 @@ func (useCase *ProfileUseCase) Execute(c *gin.Context) (data map[string]interfac
 
 	user, error := useCase.userRepository.FetchUserById(userId)
 	if error != nil {
-		return nil, useCase.profilePresenter.ToErrorResponse(error)
+		return nil, useCase.profilePresenter.ToErrorResponse(error, 403)
 	}
 
 	return useCase.profilePresenter.ToResponse(user), nil

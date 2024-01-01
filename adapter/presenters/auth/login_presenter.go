@@ -1,6 +1,7 @@
 package auth
 
 import (
+	. "notes-api-golang/adapter/presenters"
 	schema "notes-api-golang/framework/sql/schemas"
 )
 
@@ -14,8 +15,8 @@ type JWTToken struct {
 }
 
 type LoginPresenter interface {
+	Presenter
 	ToResponse(user schema.User, jwtToken JWTToken) (mapResponse map[string]interface{})
-	ToErrorResponse(err error) (mapResponse map[string]interface{})
 	ToDomain(dto LoginDTO) (user LoginDTO)
 }
 
@@ -35,9 +36,10 @@ func (presenter *loginPresenter) ToResponse(user schema.User, jwtToken JWTToken)
 
 }
 
-func (presenter *loginPresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+func (presenter *loginPresenter) ToErrorResponse(err error, code int) (mapResponse map[string]interface{}) {
 	mapResponse = map[string]interface{}{
 		"error": err.Error(),
+		"code":  code,
 	}
 
 	return

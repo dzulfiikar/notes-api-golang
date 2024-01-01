@@ -1,6 +1,7 @@
 package notes
 
 import (
+	"fmt"
 	. "notes-api-golang/adapter/presenters/note"
 	. "notes-api-golang/framework/mongo/repositories"
 
@@ -20,7 +21,7 @@ func NewFetchAllNoteUseCase(noteRepository NoteRepository, fetchAllNotePresenter
 	}
 }
 
-func (useCase *FetchAllNoteUseCase) Execute(c *gin.Context) (data []map[string]interface{}, err interface{}) {
+func (useCase *FetchAllNoteUseCase) Execute(c *gin.Context) (data []map[string]interface{}, error interface{}) {
 
 	userID := c.MustGet("user_id").(string)
 
@@ -33,10 +34,10 @@ func (useCase *FetchAllNoteUseCase) Execute(c *gin.Context) (data []map[string]i
 		filter = bson.M{"created_by": userID, "deleted": bson.M{"$exists": false}}
 	}
 
-	result, error := useCase.noteRepository.FetchAllNotes(filter)
+	result, err := useCase.noteRepository.FetchAllNotes(filter)
 
-	if error != nil {
-		return nil, useCase.fetchAllNotePresenter.ToErrorResponse(error)
+	if err != nil {
+		return nil, useCase.fetchAllNotePresenter.ToErrorResponse(fmt.Errorf("error when fething all note %w", err), 500)
 	}
 
 	return useCase.fetchAllNotePresenter.ToResponse(result), nil

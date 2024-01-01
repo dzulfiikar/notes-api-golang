@@ -2,6 +2,7 @@ package notes
 
 import (
 	"errors"
+	"fmt"
 	. "notes-api-golang/adapter/presenters/note"
 	. "notes-api-golang/framework/mongo/repositories"
 
@@ -20,7 +21,7 @@ func NewUpdateNoteUseCase(noteRepository NoteRepository, updateNotePresenter Upd
 	}
 }
 
-func (useCase *UpdateNoteUseCase) Execute(c *gin.Context) (data map[string]interface{}, err error) {
+func (useCase *UpdateNoteUseCase) Execute(c *gin.Context) (data map[string]interface{}, err interface{}) {
 	noteId := c.Param("note_id")
 	userID := c.MustGet("user_id").(string)
 	var updateNoteDTO UpdateNoteDTO
@@ -29,11 +30,11 @@ func (useCase *UpdateNoteUseCase) Execute(c *gin.Context) (data map[string]inter
 	result, err := useCase.noteRepository.Update(noteId, useCase.updateNotePresenter.ToDomain(updateNoteDTO), userID)
 
 	if result.ID == "" {
-		return nil, errors.New("Note not found")
+		return nil, useCase.updateNotePresenter.ToErrorResponse(errors.New("note not found"), 404)
 	}
 
 	if err != nil {
-		return nil, errors.New("Note not found")
+		return nil, useCase.updateNotePresenter.ToErrorResponse(fmt.Errorf("error when updating note: %w", err), 500)
 	}
 
 	return useCase.updateNotePresenter.ToResponse(result), nil

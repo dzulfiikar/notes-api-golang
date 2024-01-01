@@ -28,11 +28,11 @@ func (useCase *LoginUseCase) Execute(c *gin.Context) (data map[string]interface{
 	user, err := useCase.userRepository.FetchUserByEmail(loginDTO.Email)
 
 	if (err != nil && user == schemas.User{}) {
-		return nil, useCase.loginPresenter.ToErrorResponse(errors.New(("Invalid Email Or Password")))
+		return nil, useCase.loginPresenter.ToErrorResponse(errors.New(("Invalid Email Or Password")), 400)
 	}
 
 	if !user.CheckPasswordMatch(loginDTO.Password) {
-		return nil, useCase.loginPresenter.ToErrorResponse(errors.New(("Invalid Email Or Password")))
+		return nil, useCase.loginPresenter.ToErrorResponse(errors.New(("Invalid Email Or Password")), 400)
 	}
 
 	accessToken, _ := user.GenerateJWTToken()

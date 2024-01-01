@@ -1,6 +1,8 @@
 package notes
 
 import (
+	"errors"
+	"fmt"
 	. "notes-api-golang/adapter/presenters/note"
 	. "notes-api-golang/framework/mongo/repositories"
 
@@ -25,10 +27,18 @@ func (useCase *CreateNoteUseCase) Execute(c *gin.Context) (data map[string]inter
 
 	userID := c.MustGet("user_id").(string)
 
+	if createNoteDTO.Title == "" {
+		return nil, useCase.createNotePresenter.ToErrorResponse(errors.New("title is required"), 400)
+	}
+
+	if createNoteDTO.Content == "" {
+		return nil, useCase.createNotePresenter.ToErrorResponse(errors.New("content is required"), 400)
+	}
+
 	result, err := useCase.noteRepository.Create(useCase.createNotePresenter.ToDomain(createNoteDTO, userID))
 
 	if err != nil {
-		return nil, useCase.createNotePresenter.ToErrorResponse(err)
+		return nil, useCase.createNotePresenter.ToErrorResponse(fmt.Errorf("error when creating note: %w", err), 500)
 	}
 
 	return useCase.createNotePresenter.ToResponse(result), nil

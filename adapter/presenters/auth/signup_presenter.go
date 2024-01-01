@@ -1,6 +1,7 @@
 package auth
 
 import (
+	. "notes-api-golang/adapter/presenters"
 	schema "notes-api-golang/framework/sql/schemas"
 
 	"github.com/google/uuid"
@@ -13,8 +14,8 @@ type SignUpDTO struct {
 }
 
 type SignUpPresenter interface {
+	Presenter
 	ToResponse(user schema.User) (mapResponse map[string]interface{})
-	ToErrorResponse(err error) (mapResponse map[string]interface{})
 	ToDomain(dto SignUpDTO) (user schema.User)
 }
 
@@ -36,9 +37,10 @@ func (presenter *signUpPresenter) ToResponse(user schema.User) (mapResponse map[
 
 }
 
-func (presenter *signUpPresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+func (presenter *signUpPresenter) ToErrorResponse(err error, code int) (mapResponse map[string]interface{}) {
 	mapResponse = map[string]interface{}{
 		"error": err.Error(),
+		"code":  code,
 	}
 	return
 }

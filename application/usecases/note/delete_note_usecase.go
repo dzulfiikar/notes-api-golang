@@ -2,6 +2,7 @@ package notes
 
 import (
 	"errors"
+	"fmt"
 	. "notes-api-golang/adapter/presenters/note"
 	. "notes-api-golang/framework/mongo/repositories"
 
@@ -27,11 +28,11 @@ func (useCase *DeleteNoteUseCase) Execute(c *gin.Context) (data map[string]inter
 	result, err := useCase.noteRepository.SoftDelete(noteId, userID)
 
 	if result.ID == "" {
-		return nil, useCase.deleteNotePresenter.ToErrorResponse(errors.New("note not found"))
+		return nil, useCase.deleteNotePresenter.ToErrorResponse(errors.New("note not found"), 404)
 	}
 
 	if err != nil {
-		return nil, useCase.deleteNotePresenter.ToErrorResponse(errors.New("note not found"))
+		return nil, useCase.deleteNotePresenter.ToErrorResponse(fmt.Errorf("error when deleting note %w", err), 500)
 	}
 
 	return useCase.deleteNotePresenter.ToResponse(result), nil

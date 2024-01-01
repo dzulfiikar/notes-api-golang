@@ -1,6 +1,7 @@
 package note
 
 import (
+	. "notes-api-golang/adapter/presenters"
 	schema "notes-api-golang/framework/mongo/schemas"
 	"time"
 )
@@ -11,8 +12,8 @@ type CreateNoteDTO struct {
 }
 
 type CreateNotePresenter interface {
+	Presenter
 	ToResponse(note schema.Note) (mapResponse map[string]interface{})
-	ToErrorResponse(err error) (mapResponse map[string]interface{})
 	ToDomain(dto CreateNoteDTO, userId string) (note schema.Note)
 }
 
@@ -51,7 +52,7 @@ func (presenter *createNotePresenter) ToDomain(dto CreateNoteDTO, userId string)
 	return
 }
 
-func (presenter *createNotePresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+func (presenter *createNotePresenter) ToErrorResponse(err error, code int) (mapResponse map[string]interface{}) {
 	mapResponse = map[string]interface{}{
 		"error": err.Error(),
 	}

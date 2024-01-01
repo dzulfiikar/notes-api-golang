@@ -1,12 +1,13 @@
 package auth
 
 import (
+	. "notes-api-golang/adapter/presenters"
 	schema "notes-api-golang/framework/sql/schemas"
 )
 
 type ProfilePresenter interface {
+	Presenter
 	ToResponse(user schema.User) (mapResponse map[string]interface{})
-	ToErrorResponse(err error) (mapResponse map[string]interface{})
 }
 
 func NewProfilePresenter() ProfilePresenter {
@@ -24,9 +25,10 @@ func (presenter *profilePresenter) ToResponse(user schema.User) (mapResponse map
 
 }
 
-func (presenter *profilePresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+func (presenter *profilePresenter) ToErrorResponse(err error, code int) (mapResponse map[string]interface{}) {
 	mapResponse = map[string]interface{}{
 		"message": err.Error(),
+		"code":    code,
 	}
 
 	return

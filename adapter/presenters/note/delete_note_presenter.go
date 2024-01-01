@@ -1,12 +1,13 @@
 package note
 
 import (
+	. "notes-api-golang/adapter/presenters"
 	schema "notes-api-golang/framework/mongo/schemas"
 )
 
 type DeleteNotePresenter interface {
+	Presenter
 	ToResponse(note schema.Note) (mapResponse map[string]interface{})
-	ToErrorResponse(err error) (mapResponse map[string]interface{})
 }
 
 func NewDeleteNotePresenter() DeleteNotePresenter {
@@ -24,9 +25,10 @@ func (presenter *deleteNotePresenter) ToResponse(note schema.Note) (noteResponse
 
 }
 
-func (presenter *deleteNotePresenter) ToErrorResponse(err error) (mapResponse map[string]interface{}) {
+func (presenter *deleteNotePresenter) ToErrorResponse(err error, code int) (mapResponse map[string]interface{}) {
 	mapResponse = map[string]interface{}{
 		"error": err.Error(),
+		"code":  code,
 	}
 	return
 }
