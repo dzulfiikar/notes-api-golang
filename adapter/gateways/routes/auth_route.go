@@ -3,7 +3,7 @@ package routes
 import (
 	controllers "notes-api-golang/adapter/controllers/auth"
 	presenters "notes-api-golang/adapter/presenters/auth"
-	useCases "notes-api-golang/application/usecases/auth"
+	useCases "notes-api-golang/application/auth"
 	middlewares "notes-api-golang/framework/http/middlewares"
 	"notes-api-golang/framework/sql"
 	repository "notes-api-golang/framework/sql/repositories"

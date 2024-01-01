@@ -3,7 +3,7 @@ package routes
 import (
 	noteControllers "notes-api-golang/adapter/controllers/note"
 	notePresenter "notes-api-golang/adapter/presenters/note"
-	noteUseCases "notes-api-golang/application/usecases/note"
+	noteUseCases "notes-api-golang/application/note"
 	"notes-api-golang/framework/http/middlewares"
 	mongo "notes-api-golang/framework/mongo"
 	repositories "notes-api-golang/framework/mongo/repositories"

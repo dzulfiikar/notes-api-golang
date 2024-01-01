@@ -1,7 +1,7 @@
 package auth
 
 import (
-	. "notes-api-golang/application/usecases/auth"
+	. "notes-api-golang/application/auth"
 	"notes-api-golang/framework/http/responses"
 
 	"github.com/gin-gonic/gin"

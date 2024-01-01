@@ -2,7 +2,7 @@ package notes
 
 import (
 	notesPresenter "notes-api-golang/adapter/presenters/note"
-	notesUseCase "notes-api-golang/application/usecases/note"
+	notesUseCase "notes-api-golang/application/note"
 	"notes-api-golang/framework/http/responses"
 
 	"github.com/gin-gonic/gin"
