@@ -33,8 +33,6 @@ func (useCase *RecoverNoteUseCase) Execute(c *gin.Context) (data map[string]inte
 	}
 
 	userID := c.MustGet("user_id").(string)
-	var updateNoteDTO UpdateNoteDTO
-	c.BindJSON(&updateNoteDTO)
 
 	filter := bson.M{"created_by": userID, "deleted": true, "_id": noteId}
 	fetchedNote, err := useCase.noteRepository.FetchAllNotes(filter)

@@ -1,6 +1,7 @@
 package notes
 
 import (
+	"fmt"
 	notesPresenter "notes-api-golang/adapter/presenters/note"
 	notesUseCase "notes-api-golang/application/note"
 	"notes-api-golang/framework/http/responses"
@@ -16,7 +17,8 @@ type RecoverNoteController struct {
 func NewRecoverNoteController(recoverNoteUseCase notesUseCase.RecoverNoteUseCase, recoverNotePresenter notesPresenter.RecoverNotePresenter) *RecoverNoteController {
 	return &RecoverNoteController{
 		recoverNoteUseCase,
-		recoverNotePresenter}
+		recoverNotePresenter,
+	}
 }
 
 func (controller *RecoverNoteController) RecoverNote(c *gin.Context) {
@@ -25,6 +27,8 @@ func (controller *RecoverNoteController) RecoverNote(c *gin.Context) {
 		responses.NewErrorResponse(err).Send(c)
 		return
 	}
+
+	fmt.Println("Error recovering note:", err)
 
 	responses.NewSuccessResponse(result).Send(c)
 
