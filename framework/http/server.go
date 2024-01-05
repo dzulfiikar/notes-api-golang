@@ -16,6 +16,9 @@ func StartServer() {
 
 	r := gin.Default()
 
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+
 	gateway.CreateRoute(&r.RouterGroup)
 
 	port := os.Getenv("PORT")
